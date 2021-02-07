@@ -2,6 +2,9 @@ package payment
 
 import (
 	"database/sql"
+	"log"
+
+	"github.com/jadoreran/inception/provider"
 )
 
 // Service struct
@@ -15,17 +18,37 @@ func NewPaymentService(repository *Repository) *Service {
 }
 
 // CreatePayment a new payment
-func (service *Service) CreatePayment(db *sql.DB, name string) string {
-	id := service.repository.Insert(db, name)
-	return id
+func (service *Service) CreatePayment(db *sql.DB, payment Payment) (string, error) {
+	err := provider.CreateChargeFromSourceID(int64(payment.Amount), payment.Currency, payment.Source)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	
+	id, err := service.repository.Insert(db, payment)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	return id, nil
 }
 
 // FindPaymentByID find a single payment record
-func (service *Service) FindPaymentByID(db *sql.DB, id string) Payment {
-	return service.repository.GetByID(db, id)
+func (service *Service) FindPaymentByID(db *sql.DB, id string) (*Payment, error) {
+	payment, err := service.repository.GetByID(db, id)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return payment, nil
 }
 
 // SearchPayments and return list of payments
-func (service *Service) SearchPayments(db *sql.DB) *[]Payment{
-	return service.repository.Search(db)
+func (service *Service) SearchPayments(db *sql.DB) (*[]Payment, error){
+	payments, err :=  service.repository.Search(db)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return payments, nil
 }

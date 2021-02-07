@@ -14,7 +14,7 @@ func main() {
 	os.Remove("inception.db") 
 	file, err := os.Create("inception.db")
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 	file.Close()
 
@@ -28,28 +28,54 @@ func main() {
 
 	r := gin.Default()
 	r.POST("/payment", func(c *gin.Context) {
-		id := service.CreatePayment(db, "ssss")
+		data := &payment.Payment{}
+    c.Bind(data)
 
-	c.JSON(200, gin.H{
-		"message": id,
-	})
+		payment := payment.Payment{
+			Amount: data.Amount,
+			Currency: data.Currency,
+			Source: data.Source,
+		}
+		id, err := service.CreatePayment(db, payment)
+		if err != nil {
+			log.Println(err)
+			c.JSON(404, gin.H{
+				"error": err,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"payload": id,
+			})
+		}
 	})
 	
 	r.GET("/payment/:id", func(c *gin.Context) {
 		id := c.Param("id")
-		payment := service.FindPaymentByID(db, id)
-
-		c.JSON(200, gin.H{
-			"payload": payment,
-		})
+		payment, err := service.FindPaymentByID(db, id)
+		if err != nil {
+			log.Println(err)
+			c.JSON(404, gin.H{
+				"error": err,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"payload": payment,
+			})
+		}
 	})
 
 	r.GET("/payments", func(c *gin.Context) {
-		payments := service.SearchPayments(db)
-
-		c.JSON(200, gin.H{
-			"payload": payments,
-		})
+		payments, err := service.SearchPayments(db)
+		if err != nil {
+			log.Println(err)
+			c.JSON(404, gin.H{
+				"error": err,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"payload": payments,
+			})
+		}
 	})
 	r.Run()
 }
@@ -59,13 +85,15 @@ sqlStmt := `
 	create table payments (
 		id text PRIMARY KEY, 
 		amount integer not null, 
+		currency text not null, 
+		source text not null, 
 		created_at datetime not null, 
 		updated_at datetime not null);
 	`
 
 	stmt, err := db.Prepare(sqlStmt)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 	stmt.Exec()
 }
