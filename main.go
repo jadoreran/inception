@@ -81,15 +81,15 @@ func main() {
 }
 
 func createTable(db *sql.DB) {
-sqlStmt := `
-	create table payments (
-		id text PRIMARY KEY, 
-		amount integer not null, 
-		currency text not null, 
-		source text not null, 
-		created_at datetime not null, 
-		updated_at datetime not null);
-	`
+	sqlStmt := `
+		create table payments (
+			id text PRIMARY KEY, 
+			amount integer not null, 
+			currency text not null, 
+			source text not null, 
+			created_at datetime not null, 
+			updated_at datetime not null);
+		`
 
 	stmt, err := db.Prepare(sqlStmt)
 	if err != nil {
