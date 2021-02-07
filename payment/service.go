@@ -25,7 +25,7 @@ func (service *Service) CreatePayment(db *sql.DB, payment Payment) (string, erro
 		return "", err
 	}
 	
-	id, err := service.repository.Insert(db, payment)
+	id, err := service.repository.Insert(payment)
 	if err != nil {
 		log.Println(err)
 		return "", err
@@ -35,7 +35,7 @@ func (service *Service) CreatePayment(db *sql.DB, payment Payment) (string, erro
 
 // FindPaymentByID find a single payment record
 func (service *Service) FindPaymentByID(db *sql.DB, id string) (*Payment, error) {
-	payment, err := service.repository.GetByID(db, id)
+	payment, err := service.repository.GetByID(id)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -45,7 +45,7 @@ func (service *Service) FindPaymentByID(db *sql.DB, id string) (*Payment, error)
 
 // SearchPayments and return list of payments
 func (service *Service) SearchPayments(db *sql.DB) (*[]Payment, error){
-	payments, err :=  service.repository.Search(db)
+	payments, err :=  service.repository.Search()
 	if err != nil {
 		log.Println(err)
 		return nil, err

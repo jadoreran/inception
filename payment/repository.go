@@ -19,8 +19,8 @@ func NewRepository(database *sql.DB) *Repository {
 }
 
 // Insert a new record
-func (repository *Repository) Insert(db *sql.DB, payment Payment) (string, error) {
-	tx, err := db.Begin()
+func (repository *Repository) Insert(payment Payment) (string, error) {
+	tx, err := repository.database.Begin()
 	if err != nil {
 		log.Println(err)
 		return "", err
@@ -44,8 +44,8 @@ func (repository *Repository) Insert(db *sql.DB, payment Payment) (string, error
 }
 
 // GetByID get a single payment
-func (repository *Repository) GetByID (db *sql.DB, id string) (*Payment, error) {
-	stmt, err := db.Prepare("select * from payments where id = ?")
+func (repository *Repository) GetByID (id string) (*Payment, error) {
+	stmt, err := repository.database.Prepare("select * from payments where id = ?")
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -75,9 +75,9 @@ func (repository *Repository) GetByID (db *sql.DB, id string) (*Payment, error) 
 }
 
 // Search payments
-func (repository *Repository) Search(db *sql.DB) (*[]Payment, error) {
+func (repository *Repository) Search() (*[]Payment, error) {
 	payments := []Payment{}
-	rows, err := db.Query("select * from payments")
+	rows, err := repository.database.Query("select * from payments")
 	if err != nil {
 		log.Println(err)
 		return nil, err
