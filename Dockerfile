@@ -1,8 +1,6 @@
-FROM golang:alpine
-
-RUN mkdir -p /go/src/app
-WORKDIR /go/src/app
-
-ADD . /go/src/app
-
-RUN go get -v
+FROM golang:latest 
+RUN mkdir /app 
+ADD . /app/ 
+WORKDIR /app 
+RUN go build -o main . 
+CMD ["/app/main"]
