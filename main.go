@@ -36,7 +36,7 @@ func main() {
 			Currency: data.Currency,
 			Source: data.Source,
 		}
-		id, err := service.CreatePayment(db, payment)
+		id, err := service.CreatePayment(payment)
 		if err != nil {
 			log.Println(err)
 			c.JSON(404, gin.H{
@@ -51,7 +51,7 @@ func main() {
 	
 	r.GET("/payment/:id", func(c *gin.Context) {
 		id := c.Param("id")
-		payment, err := service.FindPaymentByID(db, id)
+		payment, err := service.FindPaymentByID(id)
 		if err != nil {
 			log.Println(err)
 			c.JSON(404, gin.H{
@@ -65,7 +65,7 @@ func main() {
 	})
 
 	r.GET("/payments", func(c *gin.Context) {
-		payments, err := service.SearchPayments(db)
+		payments, err := service.SearchPayments()
 		if err != nil {
 			log.Println(err)
 			c.JSON(404, gin.H{

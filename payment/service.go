@@ -1,7 +1,6 @@
 package payment
 
 import (
-	"database/sql"
 	"log"
 
 	"github.com/jadoreran/inception/provider"
@@ -18,7 +17,7 @@ func NewPaymentService(repository *Repository) *Service {
 }
 
 // CreatePayment a new payment
-func (service *Service) CreatePayment(db *sql.DB, payment Payment) (string, error) {
+func (service *Service) CreatePayment(payment Payment) (string, error) {
 	err := provider.CreateChargeFromSourceID(int64(payment.Amount), payment.Currency, payment.Source)
 	if err != nil {
 		log.Println(err)
@@ -34,7 +33,7 @@ func (service *Service) CreatePayment(db *sql.DB, payment Payment) (string, erro
 }
 
 // FindPaymentByID find a single payment record
-func (service *Service) FindPaymentByID(db *sql.DB, id string) (*Payment, error) {
+func (service *Service) FindPaymentByID(id string) (*Payment, error) {
 	payment, err := service.repository.GetByID(id)
 	if err != nil {
 		log.Println(err)
@@ -44,7 +43,7 @@ func (service *Service) FindPaymentByID(db *sql.DB, id string) (*Payment, error)
 }
 
 // SearchPayments and return list of payments
-func (service *Service) SearchPayments(db *sql.DB) (*[]Payment, error){
+func (service *Service) SearchPayments() (*[]Payment, error){
 	payments, err :=  service.repository.Search()
 	if err != nil {
 		log.Println(err)
