@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jadoreran/inception/payment"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -22,31 +23,34 @@ func main() {
 
 	createTable(db)
 
+	repository := payment.NewRepository(db)
+	service := payment.NewPaymentService(repository)
+
 	r := gin.Default()
-	// r.POST("/payment", func(c *gin.Context) {
-	// 	id := insert(db, "ssss")
+	r.POST("/payment", func(c *gin.Context) {
+		id := service.CreatePayment(db, "ssss")
 
-	// c.JSON(200, gin.H{
-	// 	"message": id,
-	// })
-	// })
+	c.JSON(200, gin.H{
+		"message": id,
+	})
+	})
 	
-	// r.GET("/payment/:id", func(c *gin.Context) {
-	// 	id := c.Param("id")
-	// 	payment := queryByID(db, id)
+	r.GET("/payment/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		payment := service.FindPaymentByID(db, id)
 
-	// 	c.JSON(200, gin.H{
-	// 		"payload": payment,
-	// 	})
-	// })
+		c.JSON(200, gin.H{
+			"payload": payment,
+		})
+	})
 
-	// r.GET("/payments", func(c *gin.Context) {
-	// 	payments := find(db)
+	r.GET("/payments", func(c *gin.Context) {
+		payments := service.SearchPayments(db)
 
-	// 	c.JSON(200, gin.H{
-	// 		"payload": payments,
-	// 	})
-	// })
+		c.JSON(200, gin.H{
+			"payload": payments,
+		})
+	})
 	r.Run()
 }
 
