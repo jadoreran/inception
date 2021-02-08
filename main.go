@@ -6,7 +6,9 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jadoreran/inception/payment"
+	"github.com/jadoreran/inception/domain"
+	"github.com/jadoreran/inception/repository/sqlite"
+	"github.com/jadoreran/inception/service"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -23,15 +25,15 @@ func main() {
 
 	createTable(db)
 
-	repository := payment.NewRepository(db)
-	service := payment.NewService(repository)
+	repository := sqlite.NewRepository(db)
+	service := service.NewService(repository)
 
 	r := gin.Default()
 	r.POST("/payment", func(c *gin.Context) {
-		data := &payment.Payment{}
+		data := &domain.Payment{}
 		c.Bind(data)
 
-		payment := payment.New(data.Amount, data.Currency, data.Source)
+		payment := domain.NewPayment(data.Amount, data.Currency, data.Source)
 		id, err := service.CreatePayment(payment)
 		if err != nil {
 			log.Println(err)

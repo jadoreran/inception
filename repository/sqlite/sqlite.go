@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jadoreran/inception/payment"
+	"github.com/jadoreran/inception/domain"
 )
 
 // Repository struct
@@ -20,7 +20,7 @@ func NewRepository(database *sql.DB) *Repository {
 }
 
 // Insert a new record
-func (repository *Repository) Insert(payment *payment.Payment) (string, error) {
+func (repository *Repository) Insert(payment *domain.Payment) (string, error) {
 	tx, err := repository.database.Begin()
 	if err != nil {
 		log.Println(err)
@@ -45,7 +45,7 @@ func (repository *Repository) Insert(payment *payment.Payment) (string, error) {
 }
 
 // GetByID get a single payment
-func (repository *Repository) GetByID(id string) (*payment.Payment, error) {
+func (repository *Repository) GetByID(id string) (*domain.Payment, error) {
 	stmt, err := repository.database.Prepare("select * from payments where id = ?")
 	if err != nil {
 		log.Println(err)
@@ -65,7 +65,7 @@ func (repository *Repository) GetByID(id string) (*payment.Payment, error) {
 		return nil, err
 	}
 
-	return &payment.Payment{
+	return &domain.Payment{
 		ID:        ID,
 		Amount:    amount,
 		Currency:  currency,
@@ -76,8 +76,8 @@ func (repository *Repository) GetByID(id string) (*payment.Payment, error) {
 }
 
 // Search payments
-func (repository *Repository) Search() (*[]payment.Payment, error) {
-	payments := []payment.Payment{}
+func (repository *Repository) Search() (*[]domain.Payment, error) {
+	payments := []domain.Payment{}
 	rows, err := repository.database.Query("select * from payments")
 	if err != nil {
 		log.Println(err)
@@ -98,7 +98,7 @@ func (repository *Repository) Search() (*[]payment.Payment, error) {
 			return nil, err
 		}
 
-		payments = append(payments, payment.Payment{
+		payments = append(payments, domain.Payment{
 			ID:        ID,
 			Amount:    amount,
 			Currency:  currency,

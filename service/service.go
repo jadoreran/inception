@@ -1,43 +1,25 @@
-package payment
+package service
 
 import (
 	"log"
-	"time"
 
+	"github.com/jadoreran/inception/domain"
 	"github.com/jadoreran/inception/provider"
+	"github.com/jadoreran/inception/repository/sqlite"
 )
-
-// Payment struct
-type Payment struct {
-	ID        string     `json:"id"`
-	Amount    int        `json:"amount"`
-	Currency  string     `json:"currency"`
-	Source    string     `json:"source"`
-	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt"`
-	CreatedAt *time.Time `db:"created_at" json:"createdAt"`
-}
-
-// New Create a new payment object
-func New(amount int, currency string, source string) *Payment {
-	return &Payment{
-		Amount:   amount,
-		Currency: currency,
-		Source:   source,
-	}
-}
 
 // Service struct
 type Service struct {
-	repository *Repository
+	repository *sqlite.Repository
 }
 
 // NewService Create a new repository
-func NewService(repository *Repository) *Service {
+func NewService(repository *sqlite.Repository) *Service {
 	return &Service{repository: repository}
 }
 
 // CreatePayment a new payment
-func (service *Service) CreatePayment(payment *Payment) (string, error) {
+func (service *Service) CreatePayment(payment *domain.Payment) (string, error) {
 	p := provider.New()
 	err := p.CreateCharge(int64(payment.Amount), payment.Currency, payment.Source)
 	if err != nil {
@@ -54,7 +36,7 @@ func (service *Service) CreatePayment(payment *Payment) (string, error) {
 }
 
 // FindPaymentByID find a single payment record
-func (service *Service) FindPaymentByID(id string) (*Payment, error) {
+func (service *Service) FindPaymentByID(id string) (*domain.Payment, error) {
 	payment, err := service.repository.GetByID(id)
 	if err != nil {
 		log.Println(err)
@@ -64,7 +46,7 @@ func (service *Service) FindPaymentByID(id string) (*Payment, error) {
 }
 
 // SearchPayments and return list of payments
-func (service *Service) SearchPayments() (*[]Payment, error) {
+func (service *Service) SearchPayments() (*[]domain.Payment, error) {
 	payments, err := service.repository.Search()
 	if err != nil {
 		log.Println(err)
