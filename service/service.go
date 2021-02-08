@@ -5,29 +5,29 @@ import (
 
 	"github.com/jadoreran/inception/domain"
 	"github.com/jadoreran/inception/provider"
-	"github.com/jadoreran/inception/repository/sqlite"
+	"github.com/jadoreran/inception/repository"
 )
 
 // Service struct
 type Service struct {
-	repository *sqlite.Repository
+	repository *repository.Repository
 }
 
 // NewService Create a new repository
-func NewService(repository *sqlite.Repository) *Service {
-	return &Service{repository: repository}
+func NewService(r *repository.Repository) *Service {
+	return &Service{repository: r}
 }
 
 // CreatePayment a new payment
-func (service *Service) CreatePayment(payment *domain.Payment) (string, error) {
-	p := provider.New()
-	err := p.CreateCharge(int64(payment.Amount), payment.Currency, payment.Source)
+func (s *Service) CreatePayment(p *domain.Payment) (string, error) {
+	provider := provider.New()
+	err := provider.CreateCharge(int64(p.Amount), p.Currency, p.Source)
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
 
-	id, err := service.repository.Insert(payment)
+	id, err := s.repository.Insert(p)
 	if err != nil {
 		log.Println(err)
 		return "", err
@@ -36,8 +36,8 @@ func (service *Service) CreatePayment(payment *domain.Payment) (string, error) {
 }
 
 // FindPaymentByID find a single payment record
-func (service *Service) FindPaymentByID(id string) (*domain.Payment, error) {
-	payment, err := service.repository.GetByID(id)
+func (s *Service) FindPaymentByID(id string) (*domain.Payment, error) {
+	payment, err := s.repository.GetByID(id)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -46,8 +46,8 @@ func (service *Service) FindPaymentByID(id string) (*domain.Payment, error) {
 }
 
 // SearchPayments and return list of payments
-func (service *Service) SearchPayments() (*[]domain.Payment, error) {
-	payments, err := service.repository.Search()
+func (s *Service) SearchPayments() (*[]domain.Payment, error) {
+	payments, err := s.repository.Search()
 	if err != nil {
 		log.Println(err)
 		return nil, err

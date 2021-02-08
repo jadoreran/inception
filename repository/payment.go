@@ -1,4 +1,4 @@
-package sqlite
+package repository
 
 import (
 	"database/sql"
@@ -20,8 +20,8 @@ func NewRepository(database *sql.DB) *Repository {
 }
 
 // Insert a new record
-func (repository *Repository) Insert(payment *domain.Payment) (string, error) {
-	tx, err := repository.database.Begin()
+func (r *Repository) Insert(p *domain.Payment) (string, error) {
+	tx, err := r.database.Begin()
 	if err != nil {
 		log.Println(err)
 		return "", err
@@ -34,7 +34,7 @@ func (repository *Repository) Insert(payment *domain.Payment) (string, error) {
 	defer stmt.Close()
 
 	id := uuid.New()
-	_, err = stmt.Exec(id, payment.Amount, payment.Currency, payment.Source)
+	_, err = stmt.Exec(id, p.Amount, p.Currency, p.Source)
 	if err != nil {
 		log.Println(err)
 		return "", err
@@ -45,8 +45,8 @@ func (repository *Repository) Insert(payment *domain.Payment) (string, error) {
 }
 
 // GetByID get a single payment
-func (repository *Repository) GetByID(id string) (*domain.Payment, error) {
-	stmt, err := repository.database.Prepare("select * from payments where id = ?")
+func (r *Repository) GetByID(id string) (*domain.Payment, error) {
+	stmt, err := r.database.Prepare("select * from payments where id = ?")
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -76,9 +76,9 @@ func (repository *Repository) GetByID(id string) (*domain.Payment, error) {
 }
 
 // Search payments
-func (repository *Repository) Search() (*[]domain.Payment, error) {
+func (r *Repository) Search() (*[]domain.Payment, error) {
 	payments := []domain.Payment{}
-	rows, err := repository.database.Query("select * from payments")
+	rows, err := r.database.Query("select * from payments")
 	if err != nil {
 		log.Println(err)
 		return nil, err

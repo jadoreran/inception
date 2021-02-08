@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jadoreran/inception/domain"
-	"github.com/jadoreran/inception/repository/sqlite"
+	"github.com/jadoreran/inception/repository"
 	"github.com/jadoreran/inception/service"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -25,7 +25,7 @@ func main() {
 
 	createTable(db)
 
-	repository := sqlite.NewRepository(db)
+	repository := repository.NewRepository(db)
 	service := service.NewService(repository)
 
 	r := gin.Default()
