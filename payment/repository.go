@@ -19,7 +19,7 @@ func NewRepository(database *sql.DB) *Repository {
 }
 
 // Insert a new record
-func (repository *Repository) Insert(payment Payment) (string, error) {
+func (repository *Repository) Insert(payment *Payment) (string, error) {
 	tx, err := repository.database.Begin()
 	if err != nil {
 		log.Println(err)

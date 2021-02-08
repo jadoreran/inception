@@ -24,18 +24,14 @@ func main() {
 	createTable(db)
 
 	repository := payment.NewRepository(db)
-	service := payment.NewPaymentService(repository)
+	service := payment.NewService(repository)
 
 	r := gin.Default()
 	r.POST("/payment", func(c *gin.Context) {
 		data := &payment.Payment{}
 		c.Bind(data)
 
-		payment := payment.Payment{
-			Amount:   data.Amount,
-			Currency: data.Currency,
-			Source:   data.Source,
-		}
+		payment := payment.New(data.Amount, data.Currency, data.Source)
 		id, err := service.CreatePayment(payment)
 		if err != nil {
 			log.Println(err)

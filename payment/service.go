@@ -2,23 +2,43 @@ package payment
 
 import (
 	"log"
+	"time"
 
 	"github.com/jadoreran/inception/provider"
 )
+
+// Payment struct
+type Payment struct {
+	ID        string     `json:"id"`
+	Amount    int        `json:"amount"`
+	Currency  string     `json:"currency"`
+	Source    string     `json:"source"`
+	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt"`
+	CreatedAt *time.Time `db:"created_at" json:"createdAt"`
+}
+
+// New Create a new payment object
+func New(amount int, currency string, source string) *Payment {
+	return &Payment{
+		Amount:   amount,
+		Currency: currency,
+		Source:   source,
+	}
+}
 
 // Service struct
 type Service struct {
 	repository *Repository
 }
 
-// NewPaymentService Create a new repository
-func NewPaymentService(repository *Repository) *Service {
+// NewService Create a new repository
+func NewService(repository *Repository) *Service {
 	return &Service{repository: repository}
 }
 
 // CreatePayment a new payment
-func (service *Service) CreatePayment(payment Payment) (string, error) {
-	p := provider.Omise{}
+func (service *Service) CreatePayment(payment *Payment) (string, error) {
+	p := provider.New()
 	err := p.CreateCharge(int64(payment.Amount), payment.Currency, payment.Source)
 	if err != nil {
 		log.Println(err)
