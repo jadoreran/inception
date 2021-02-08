@@ -13,17 +13,18 @@ type Service struct {
 
 // NewPaymentService Create a new repository
 func NewPaymentService(repository *Repository) *Service {
-	return &Service{ repository: repository }
+	return &Service{repository: repository}
 }
 
 // CreatePayment a new payment
 func (service *Service) CreatePayment(payment Payment) (string, error) {
-	err := provider.CreateChargeFromSourceID(int64(payment.Amount), payment.Currency, payment.Source)
+	p := provider.Omise{}
+	err := p.CreateCharge(int64(payment.Amount), payment.Currency, payment.Source)
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
-	
+
 	id, err := service.repository.Insert(payment)
 	if err != nil {
 		log.Println(err)
@@ -43,8 +44,8 @@ func (service *Service) FindPaymentByID(id string) (*Payment, error) {
 }
 
 // SearchPayments and return list of payments
-func (service *Service) SearchPayments() (*[]Payment, error){
-	payments, err :=  service.repository.Search()
+func (service *Service) SearchPayments() (*[]Payment, error) {
+	payments, err := service.repository.Search()
 	if err != nil {
 		log.Println(err)
 		return nil, err

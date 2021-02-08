@@ -44,7 +44,7 @@ func (repository *Repository) Insert(payment Payment) (string, error) {
 }
 
 // GetByID get a single payment
-func (repository *Repository) GetByID (id string) (*Payment, error) {
+func (repository *Repository) GetByID(id string) (*Payment, error) {
 	stmt, err := repository.database.Prepare("select * from payments where id = ?")
 	if err != nil {
 		log.Println(err)
@@ -65,10 +65,10 @@ func (repository *Repository) GetByID (id string) (*Payment, error) {
 	}
 
 	return &Payment{
-		ID: ID,
-		Amount: amount,
-		Currency: currency,
-		Source: source,
+		ID:        ID,
+		Amount:    amount,
+		Currency:  currency,
+		Source:    source,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}, nil
@@ -83,7 +83,7 @@ func (repository *Repository) Search() (*[]Payment, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	for rows.Next() {
 		var ID string
 		var amount int
@@ -98,10 +98,10 @@ func (repository *Repository) Search() (*[]Payment, error) {
 		}
 
 		payments = append(payments, Payment{
-			ID: ID,
-			Amount: amount,
-			Currency: currency,
-			Source: source,
+			ID:        ID,
+			Amount:    amount,
+			Currency:  currency,
+			Source:    source,
 			CreatedAt: createdAt,
 			UpdatedAt: updatedAt,
 		})

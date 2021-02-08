@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	os.Remove("inception.db") 
+	os.Remove("inception.db")
 	file, err := os.Create("inception.db")
 	if err != nil {
 		log.Println(err.Error())
@@ -29,12 +29,12 @@ func main() {
 	r := gin.Default()
 	r.POST("/payment", func(c *gin.Context) {
 		data := &payment.Payment{}
-    c.Bind(data)
+		c.Bind(data)
 
 		payment := payment.Payment{
-			Amount: data.Amount,
+			Amount:   data.Amount,
 			Currency: data.Currency,
-			Source: data.Source,
+			Source:   data.Source,
 		}
 		id, err := service.CreatePayment(payment)
 		if err != nil {
@@ -48,7 +48,7 @@ func main() {
 			})
 		}
 	})
-	
+
 	r.GET("/payment/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		payment, err := service.FindPaymentByID(id)
@@ -77,6 +77,7 @@ func main() {
 			})
 		}
 	})
+
 	r.Run()
 }
 

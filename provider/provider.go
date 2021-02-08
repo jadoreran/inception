@@ -12,8 +12,12 @@ const (
 	omiseSecretKey = "skey_test_5msppk1y79ktkwocson"
 )
 
-// CreateChargeFromSourceID use type as source
-func CreateChargeFromSourceID(amount int64, currency string, sourceType string) error {
+// Omise struct
+type Omise struct {
+}
+
+// CreateCharge use type as source
+func (o *Omise) CreateCharge(amount int64, currency string, sourceType string) error {
 	client, err := omise.NewClient(omisePublicKey, omiseSecretKey)
 	if err != nil {
 		log.Println(err)
@@ -24,7 +28,7 @@ func CreateChargeFromSourceID(amount int64, currency string, sourceType string) 
 	source, createSource := &omise.Source{}, &operations.CreateSource{
 		Amount:   amount,
 		Currency: currency,
-		Type: sourceType,
+		Type:     sourceType,
 	}
 	if err := client.Do(source, createSource); err != nil {
 		log.Println(err)
@@ -32,10 +36,10 @@ func CreateChargeFromSourceID(amount int64, currency string, sourceType string) 
 	}
 
 	charge, createCharge := &omise.Charge{}, &operations.CreateCharge{
-		Amount:   amount,
-		Currency: currency,
-		ReturnURI:   "http://www.example.com",
-		Source: source.ID,
+		Amount:    amount,
+		Currency:  currency,
+		ReturnURI: "http://www.example.com",
+		Source:    source.ID,
 	}
 
 	if err := client.Do(charge, createCharge); err != nil {
