@@ -1,4 +1,4 @@
-package payment
+package sqlite
 
 import (
 	"database/sql"
@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jadoreran/inception/payment"
 )
 
 // Repository struct
@@ -19,7 +20,7 @@ func NewRepository(database *sql.DB) *Repository {
 }
 
 // Insert a new record
-func (repository *Repository) Insert(payment *Payment) (string, error) {
+func (repository *Repository) Insert(payment *payment.Payment) (string, error) {
 	tx, err := repository.database.Begin()
 	if err != nil {
 		log.Println(err)
@@ -44,7 +45,7 @@ func (repository *Repository) Insert(payment *Payment) (string, error) {
 }
 
 // GetByID get a single payment
-func (repository *Repository) GetByID(id string) (*Payment, error) {
+func (repository *Repository) GetByID(id string) (*payment.Payment, error) {
 	stmt, err := repository.database.Prepare("select * from payments where id = ?")
 	if err != nil {
 		log.Println(err)
@@ -64,7 +65,7 @@ func (repository *Repository) GetByID(id string) (*Payment, error) {
 		return nil, err
 	}
 
-	return &Payment{
+	return &payment.Payment{
 		ID:        ID,
 		Amount:    amount,
 		Currency:  currency,
@@ -75,8 +76,8 @@ func (repository *Repository) GetByID(id string) (*Payment, error) {
 }
 
 // Search payments
-func (repository *Repository) Search() (*[]Payment, error) {
-	payments := []Payment{}
+func (repository *Repository) Search() (*[]payment.Payment, error) {
+	payments := []payment.Payment{}
 	rows, err := repository.database.Query("select * from payments")
 	if err != nil {
 		log.Println(err)
@@ -97,7 +98,7 @@ func (repository *Repository) Search() (*[]Payment, error) {
 			return nil, err
 		}
 
-		payments = append(payments, Payment{
+		payments = append(payments, payment.Payment{
 			ID:        ID,
 			Amount:    amount,
 			Currency:  currency,
