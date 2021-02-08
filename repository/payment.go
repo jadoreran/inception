@@ -9,18 +9,18 @@ import (
 	"github.com/jadoreran/inception/domain"
 )
 
-// Repository struct
-type Repository struct {
+// PaymentRepository struct
+type PaymentRepository struct {
 	database *sql.DB
 }
 
-// NewRepository Create a new repository
-func NewRepository(database *sql.DB) *Repository {
-	return &Repository{database: database}
+// NewPaymentRepository Create a new repository
+func NewPaymentRepository(database *sql.DB) *PaymentRepository {
+	return &PaymentRepository{database: database}
 }
 
 // Insert a new record
-func (r *Repository) Insert(p *domain.Payment) (string, error) {
+func (r *PaymentRepository) Insert(p *domain.Payment) (string, error) {
 	tx, err := r.database.Begin()
 	if err != nil {
 		log.Println(err)
@@ -45,7 +45,7 @@ func (r *Repository) Insert(p *domain.Payment) (string, error) {
 }
 
 // GetByID get a single payment
-func (r *Repository) GetByID(id string) (*domain.Payment, error) {
+func (r *PaymentRepository) GetByID(id string) (*domain.Payment, error) {
 	stmt, err := r.database.Prepare("select * from payments where id = ?")
 	if err != nil {
 		log.Println(err)
@@ -76,7 +76,7 @@ func (r *Repository) GetByID(id string) (*domain.Payment, error) {
 }
 
 // Search payments
-func (r *Repository) Search() (*[]domain.Payment, error) {
+func (r *PaymentRepository) Search() (*[]domain.Payment, error) {
 	payments := []domain.Payment{}
 	rows, err := r.database.Query("select * from payments")
 	if err != nil {

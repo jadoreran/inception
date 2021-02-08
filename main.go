@@ -25,7 +25,7 @@ func main() {
 
 	createTable(db)
 
-	repository := repository.NewRepository(db)
+	repository := repository.NewPaymentRepository(db)
 	service := service.NewService(repository)
 
 	r := gin.Default()
