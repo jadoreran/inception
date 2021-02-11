@@ -64,7 +64,7 @@ func (s *paymentServiceTest) CreatePayment(p *domain.Payment) (string, error) {
 	return id, nil
 }
 
-func TestInsert(t *testing.T) {
+func TestCreatePayment(t *testing.T) {
 	repository := &paymentRepositoryTest{}
 	provider := &omiseTest{}
 	service := newPaymentServiceTest(repository, provider)
