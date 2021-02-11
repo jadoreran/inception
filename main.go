@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jadoreran/inception/domain"
+	"github.com/jadoreran/inception/provider"
 	"github.com/jadoreran/inception/repository"
 	"github.com/jadoreran/inception/service"
 	_ "github.com/mattn/go-sqlite3"
@@ -26,7 +27,8 @@ func main() {
 	createTable(db)
 
 	repository := repository.NewPaymentRepository(db)
-	service := service.NewService(repository)
+	provider := provider.NewOmise()
+	service := service.NewService(repository, provider)
 
 	r := gin.Default()
 	r.POST("/payment", func(c *gin.Context) {

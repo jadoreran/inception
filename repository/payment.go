@@ -9,6 +9,13 @@ import (
 	"github.com/jadoreran/inception/domain"
 )
 
+// Store interface
+type Store interface {
+	Insert(p *domain.Payment) (string, error)
+	GetByID(id string) (*domain.Payment, error)
+	Search() (*[]domain.Payment, error)
+}
+
 // PaymentRepository struct
 type PaymentRepository struct {
 	database *sql.DB

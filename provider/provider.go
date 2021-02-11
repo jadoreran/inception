@@ -12,17 +12,22 @@ const (
 	omiseSecretKey = "skey_test_5msppk1y79ktkwocson"
 )
 
-// Provider struct
-type Provider struct {
+// Provider interface
+type Provider interface {
+	CreateCharge(amount int64, currency string, sourceType string) error
 }
 
-// New Create a new payment object
-func New() *Provider {
-	return &Provider{}
+// Omise struct
+type Omise struct {
+}
+
+// NewOmise a new Omise payment object
+func NewOmise() *Omise {
+	return &Omise{}
 }
 
 // CreateCharge use type as source
-func (o *Provider) CreateCharge(amount int64, currency string, sourceType string) error {
+func (*Omise) CreateCharge(amount int64, currency string, sourceType string) error {
 	client, err := omise.NewClient(omisePublicKey, omiseSecretKey)
 	if err != nil {
 		log.Println(err)
