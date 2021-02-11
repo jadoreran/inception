@@ -43,9 +43,9 @@ type paymentServiceTest struct {
 	provider   provider.Provider
 }
 
-// NewService Create a new repository
-func newfakePaymentService(r repository.Store) *paymentServiceTest {
-	return &paymentServiceTest{repository: r}
+// newFakePaymentService Create a new repository
+func newPaymentServiceTest(r repository.Store, p provider.Provider) *paymentServiceTest {
+	return &paymentServiceTest{repository: r, provider: p}
 }
 
 // CreatePayment a new payment
@@ -66,7 +66,8 @@ func (s *paymentServiceTest) CreatePayment(p *domain.Payment) (string, error) {
 
 func TestInsert(t *testing.T) {
 	repository := &paymentRepositoryTest{}
-	service := newfakePaymentService(repository)
+	provider := &omiseTest{}
+	service := newPaymentServiceTest(repository, provider)
 
 	payment := domain.Payment{}
 
